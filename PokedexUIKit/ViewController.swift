@@ -7,6 +7,7 @@
 
 import Combine
 import Kingfisher
+import SwiftUI
 import UIKit
 
 class ViewController: UIViewController {
@@ -106,6 +107,7 @@ class ViewController: UIViewController {
             collectionViewLayout: layout
         )
         collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.reuseIdentifier)
+        collectionView.delegate = self
         return collectionView
     }()
     
@@ -133,12 +135,21 @@ class ViewController: UIViewController {
         Pokemon.decodeAllPokemon()
             .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { _ in },
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error): print("Error \(error)")
+                    case .finished: print("Publisher is finished")
+                    }
+                },
                 receiveValue: { [weak self] pokemon in
+                    self?.allPokemon = pokemon
                     self?.pokemonToShow = pokemon
                 }
-            ).store(in: &cancellables)
+            )
+            .store(in: &cancellables)
     }
+    
+    var allPokemon: [Pokemon] = []
 
     private struct Section: Hashable {
         let index: Int
@@ -195,39 +206,21 @@ class ViewController: UIViewController {
 
 }
 
-private extension Pokemon.PokemonType {
-    var title: String? {
-        switch self {
-        case .unknown:
-            return nil
-        case .notApplicable:
-            return nil
-        default:
-            return rawValue.capitalized
-        }
-    }
-    
-    var isDisplayable: Bool {
-        switch self {
-        case .unknown:
-            return false
-        case .notApplicable:
-            return false
-        default:
-            return true
-        }
-    }
-    
-    static var displayableTypes: [Pokemon.PokemonType] {
-        Pokemon.PokemonType.allCases.compactMap { pokemonType in
-            pokemonType.isDisplayable ? pokemonType : nil
-        }
-    }
-    
-    var image: UIImage? {
-        guard isDisplayable else { return nil }
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard
+            pokemonToShow.indices.contains(indexPath.item)
+        else { return }
         
-        return UIImage(named: "PokemonTypes/\(rawValue)")
+        let selectedPokemon = pokemonToShow[indexPath.item]
+        
+        navigationController?.pushViewController(
+            BarChartViewController(
+                allPokemon: allPokemon,
+                selectedPokemon: selectedPokemon
+            ),
+            animated: true
+        )
     }
 }
 

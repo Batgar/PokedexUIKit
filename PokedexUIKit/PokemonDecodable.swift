@@ -7,6 +7,7 @@
 
 import Combine
 import Foundation
+import UIKit
 
 struct Pokemon: Decodable, Hashable {
     
@@ -57,6 +58,7 @@ struct Pokemon: Decodable, Hashable {
     let againstBug: Double
     let againstDark: Double
     let againstDragon: Double
+    var heightM: Double?
     let name: String
     let type1: PokemonType
     let type2: PokemonType
@@ -115,9 +117,110 @@ enum PokemonError: Error {
     case invalidFileURL
 }
 
+extension Pokemon {
+    var color: UIColor {
+        type1.color ?? UIColor.yellow
+    }
+}
 
 extension Pokemon.PokemonType: Decodable {
     public init(from decoder: Decoder) throws {
         self = try Pokemon.PokemonType(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
+    }
+}
+
+extension Pokemon.PokemonType {
+    var title: String? {
+        switch self {
+        case .unknown:
+            return nil
+        case .notApplicable:
+            return nil
+        default:
+            return rawValue.capitalized
+        }
+    }
+    
+    var isDisplayable: Bool {
+        switch self {
+        case .unknown:
+            return false
+        case .notApplicable:
+            return false
+        default:
+            return true
+        }
+    }
+    
+    static var displayableTypes: [Pokemon.PokemonType] {
+        Pokemon.PokemonType.allCases.compactMap { pokemonType in
+            pokemonType.isDisplayable ? pokemonType : nil
+        }
+    }
+    
+    var image: UIImage? {
+        guard isDisplayable else { return nil }
+        
+        return UIImage(named: "PokemonTypes/\(rawValue)")
+    }
+    
+    var smallImage: UIImage? {
+        image.flatMap {
+            $0.imageWith(newSize: CGSize(width: 50, height: 50))
+        }
+    }
+    
+    var color: UIColor? {
+        guard isDisplayable else { return nil }
+        switch self {
+        case .normal:
+            return .gray
+        case .notApplicable, .unknown:
+            return nil
+        case .bug:
+            return .green
+        case .dark:
+            return .darkGray
+        case .dragon:
+            return .blue
+        case .electric:
+            return .yellow
+        case .fairy:
+            return .systemPink
+        case .fighting:
+            return .red
+        case .fire:
+            return .orange
+        case .flying:
+            return .lightGray
+        case .ghost:
+            return .blue
+        case .grass:
+            return .green
+        case .ground:
+            return .brown
+        case .ice:
+            return .systemTeal
+        case .poison:
+            return .purple
+        case .psychic:
+            return .red
+        case .rock:
+            return .brown
+        case .steel:
+            return .gray
+        case .water:
+            return .blue
+        }
+    }
+}
+
+extension UIImage {
+    func imageWith(newSize: CGSize) -> UIImage {
+        let image = UIGraphicsImageRenderer(size: newSize).image { _ in
+            draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        
+        return image.withRenderingMode(renderingMode)
     }
 }
