@@ -46,6 +46,9 @@ class PokemonCell: UICollectionViewCell {
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
+            imageView.widthAnchor.constraint(greaterThanOrEqualToConstant: 256),
+            imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 256),
+            
             stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -55,5 +58,13 @@ class PokemonCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("Not implemented")
+    }
+    
+    var onReuse: () -> Void = {}
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        onReuse()
+        imageView.image = nil
     }
 }

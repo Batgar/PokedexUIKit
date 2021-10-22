@@ -163,6 +163,7 @@ class ViewController: UIViewController {
         _ indexPath: IndexPath,
         _ itemIdentifier: Pokemon
     ) -> UICollectionViewCell? {
+        print("pokemon - \(indexPath.item)")
         guard
             pokemonToShow.indices.contains(indexPath.item),
             let cell = collectionView.dequeueReusableCell(
@@ -174,9 +175,25 @@ class ViewController: UIViewController {
         let pokemon = pokemonToShow[indexPath.item]
         cell.nameLabel.text = pokemon.name
         
-        if let imageName = pokemon.imageName,
-            let image = UIImage(named: imageName) {
-            cell.imageView.image = image
+        if let imageURL = pokemon.imageURL {
+            let task = URLSession.shared.dataTask(with: imageURL) { data, _ , _ in
+                guard
+                    let data = data
+                else {
+                    // Load a placeholder image into the imageView
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    cell.imageView.image = UIImage(data: data)
+                }
+            }
+            
+            task.resume()
+            
+            cell.onReuse = {
+                task.cancel()
+            }
         }
         
         return cell

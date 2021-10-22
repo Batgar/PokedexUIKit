@@ -62,7 +62,7 @@ struct Pokemon: Decodable, Hashable {
     let type2: PokemonType
     
     var index: Int?
-    var imageName: String?
+    var imageURL: URL?
 }
 
 extension Pokemon {
@@ -96,7 +96,7 @@ extension Pokemon {
                 let indexedPokemon = pokemon.enumerated().map { index, pokemon -> Pokemon in
                     var indexedPokemon = pokemon
                     indexedPokemon.index = index + 1
-                    indexedPokemon.imageName = "AllPokemon/\(index + 1)"
+                    indexedPokemon.imageURL = URL(string: "https://d18bqzgu48wusx.cloudfront.net/\(index + 1).png")!
                     return indexedPokemon
                 }
                 
