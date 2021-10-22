@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Kingfisher
 import UIKit
 
 class ViewController: UIViewController {
@@ -176,23 +177,12 @@ class ViewController: UIViewController {
         cell.nameLabel.text = pokemon.name
         
         if let imageURL = pokemon.imageURL {
-            let task = URLSession.shared.dataTask(with: imageURL) { data, _ , _ in
-                guard
-                    let data = data
-                else {
-                    // Load a placeholder image into the imageView
-                    return
-                }
+            let task = cell.imageView.kf
+                .setImage(with: imageURL)
+                .
                 
-                DispatchQueue.main.async {
-                    cell.imageView.image = UIImage(data: data)
-                }
-            }
-            
-            task.resume()
-            
             cell.onReuse = {
-                task.cancel()
+                task?.cancel()
             }
         }
         
