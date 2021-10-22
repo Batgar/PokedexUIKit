@@ -20,7 +20,32 @@ class PokemonCell: UICollectionViewCell {
     let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
         return imageView
+    }()
+    
+    let type1ImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    let type2ImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    private lazy var typeStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            type1ImageView,
+            type2ImageView,
+        ])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        return stackView
     }()
     
     private lazy var stackView: UIStackView = {
@@ -40,6 +65,8 @@ class PokemonCell: UICollectionViewCell {
         
         contentView.addSubview(stackView)
         
+        stackView.addSubview(typeStackView)
+        
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: topAnchor),
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -48,6 +75,15 @@ class PokemonCell: UICollectionViewCell {
             
             imageView.widthAnchor.constraint(greaterThanOrEqualToConstant: 256),
             imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 256),
+            
+            typeStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
+            typeStackView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+            
+            type1ImageView.widthAnchor.constraint(equalToConstant: 48),
+            type1ImageView.heightAnchor.constraint(equalToConstant: 48),
+            
+            type2ImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 48),
+            type2ImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 48),
             
             stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),

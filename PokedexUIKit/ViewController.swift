@@ -175,12 +175,16 @@ class ViewController: UIViewController {
         
         let pokemon = pokemonToShow[indexPath.item]
         cell.nameLabel.text = pokemon.name
+        cell.type1ImageView.image = pokemon.type1.image
+        cell.type2ImageView.image = pokemon.type2.image
         
         if let imageURL = pokemon.imageURL {
             let task = cell.imageView.kf
-                .setImage(with: imageURL)
-                .
-                
+                .setImage(
+                    with: imageURL,
+                    placeholder: UIImage(named: "International_Pokemon_logo")
+                )
+            
             cell.onReuse = {
                 task?.cancel()
             }
@@ -218,6 +222,12 @@ private extension Pokemon.PokemonType {
         Pokemon.PokemonType.allCases.compactMap { pokemonType in
             pokemonType.isDisplayable ? pokemonType : nil
         }
+    }
+    
+    var image: UIImage? {
+        guard isDisplayable else { return nil }
+        
+        return UIImage(named: "PokemonTypes/\(rawValue)")
     }
 }
 
