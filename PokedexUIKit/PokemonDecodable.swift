@@ -212,40 +212,50 @@ extension Pokemon.PokemonType {
         case .notApplicable, .unknown:
             return nil
         case .bug:
-            return .green
+            return .fromRGB(0x83c400)
         case .dark:
-            return .darkGray
+            return .fromRGB(0x5c5465)
         case .dragon:
-            return .blue
+            return .fromRGB(0x016fc9)
         case .electric:
-            return .yellow
+            return .fromRGB(0xfbd107)
         case .fairy:
-            return .systemPink
+            return .fromRGB(0xfb89ea)
         case .fighting:
-            return .red
+            return .fromRGB(0xe0306a)
         case .fire:
-            return .orange
+            return .fromRGB(0xfe9740)
         case .flying:
-            return .lightGray
+            return .fromRGB(0x8aaae3)
         case .ghost:
-            return .blue
+            return .fromRGB(0x4c6ab2)
         case .grass:
-            return .green
+            return .fromRGB(0x37c04b)
         case .ground:
-            return .brown
+            return .fromRGB(0xe87136)
         case .ice:
-            return .systemTeal
+            return .fromRGB(0x4bd1c0)
         case .poison:
-            return .purple
+            return .fromRGB(0xb567cf)
         case .psychic:
-            return .red
+            return .fromRGB(0xff6675)
         case .rock:
-            return .brown
+            return .fromRGB(0xc8b588)
         case .steel:
-            return .gray
+            return .fromRGB(0x5a8ea1)
         case .water:
-            return .blue
+            return .fromRGB(0x3592dd)
         }
+    }
+}
+
+extension UIColor {
+    static func fromRGB(_ rgbValue: Int) -> UIColor! {
+        UIColor(
+            red: CGFloat((Float((rgbValue & 0xff0000) >> 16)) / 255.0),
+            green: CGFloat((Float((rgbValue & 0x00ff00) >> 8)) / 255.0),
+            blue: CGFloat((Float((rgbValue & 0x0000ff) >> 0)) / 255.0),
+            alpha: 1.0)
     }
 }
 

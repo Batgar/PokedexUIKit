@@ -68,6 +68,7 @@ class PokemonDetailViewController: UIViewController {
     
     private lazy var attackTypesPieChartView: PieChartView = {
         let pieChartView = PieChartView()
+        pieChartView.legend.enabled = false
         return pieChartView
     }()
     
