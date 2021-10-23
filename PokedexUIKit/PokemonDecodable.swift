@@ -36,28 +36,25 @@ struct Pokemon: Decodable, Hashable {
         case unknown
     }
     
-    /*"against_bug": 1,
-    "against_dark": 1,
-    "against_dragon": 1,
-    "against_electric": 0.5,
-    "against_fairy": 0.5,
-    "against_fight": 0.5,
-    "against_fire": 2,
-    "against_flying": 2,
-    "against_ghost": 1,
-    "against_grass": 0.25,
-    "against_ground": 1,
-    "against_ice": 2,
-    "against_normal": 1,
-    "against_poison": 1,
-    "against_psychic": 2,
-    "against_rock": 1,
-    "against_steel": 1,
-    "against_water": 0.5,*/
-    
     let againstBug: Double
     let againstDark: Double
     let againstDragon: Double
+    let againstElectric: Double
+    let againstFairy: Double
+    let againstFight: Double
+    let againstFire: Double
+    let againstFlying: Double
+    let againstGhost: Double
+    let againstGrass: Double
+    let againstGround: Double
+    let againstIce: Double
+    let againstNormal: Double
+    let againstPoison: Double
+    let againstPsychic: Double
+    let againstRock: Double
+    let againstSteel: Double
+    let againstWater: Double
+   
     let attack: Double
     var heightM: Double?
     let name: String
@@ -123,6 +120,34 @@ extension Pokemon {
     var color: UIColor {
         type1.color ?? UIColor.yellow
     }
+    
+    struct AttackSummary {
+        let value: Double
+        let type: PokemonType
+    }
+    
+    var attackSummaries: [AttackSummary] {
+        [
+            AttackSummary(value: againstBug, type: .bug),
+            AttackSummary(value: againstDark, type: .dark),
+            AttackSummary(value: againstDragon, type: .dragon),
+            AttackSummary(value: againstElectric, type: .electric),
+            AttackSummary(value: againstFairy, type: .fairy),
+            AttackSummary(value: againstFight, type: .fighting),
+            AttackSummary(value: againstFire, type: .fire),
+            AttackSummary(value: againstFlying, type: .flying),
+            AttackSummary(value: againstGhost, type: .ghost),
+            AttackSummary(value: againstGrass, type: .grass),
+            AttackSummary(value: againstGround, type: .ground),
+            AttackSummary(value: againstIce, type: .ice),
+            AttackSummary(value: againstNormal, type: .normal),
+            AttackSummary(value: againstPoison, type: .poison),
+            AttackSummary(value: againstPsychic, type: .psychic),
+            AttackSummary(value: againstRock, type: .rock),
+            AttackSummary(value: againstSteel, type: .steel),
+            AttackSummary(value: againstWater, type: .water),
+        ]
+    }
 }
 
 extension Pokemon.PokemonType: Decodable {
@@ -171,6 +196,13 @@ extension Pokemon.PokemonType {
             $0.imageWith(newSize: CGSize(width: 50, height: 50))
         }
     }
+    
+    var smallerImage: UIImage? {
+        image.flatMap {
+            $0.imageWith(newSize: CGSize(width: 30, height: 30))
+        }
+    }
+    
     
     var color: UIColor? {
         guard isDisplayable else { return nil }
