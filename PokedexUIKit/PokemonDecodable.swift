@@ -11,7 +11,7 @@ import UIKit
 
 struct Pokemon: Decodable, Hashable {
     
-    enum PokemonType: String, CaseIterable {
+    enum PokemonType: String, Decodable, CaseIterable {
         case fire
         case flying
         case grass
@@ -30,11 +30,9 @@ struct Pokemon: Decodable, Hashable {
         case ground
         case normal
         case ice
-        
-        case notApplicable = ""
-        
-        case unknown
     }
+    
+    let abilities: [String]
     
     let againstBug: Double
     let againstDark: Double
@@ -59,7 +57,7 @@ struct Pokemon: Decodable, Hashable {
     var heightM: Double?
     let name: String
     let type1: PokemonType
-    let type2: PokemonType
+    var type2: PokemonType?
     var weightKg: Double?
     
     var index: Int?
@@ -71,6 +69,14 @@ extension Pokemon {
         decodeAllPokemon()
             .tryMap { allPokemon in
                 allPokemon.filter { $0.type1 == type || $0.type2 == type }
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    static func pokemonWithAbility(_ ability: String) -> AnyPublisher<[Pokemon], Error> {
+        decodeAllPokemon()
+            .tryMap { allPokemon in
+                allPokemon.filter { $0.abilities.contains(where: { $0 == ability }) }
             }
             .eraseToAnyPublisher()
     }
@@ -121,74 +127,42 @@ extension Pokemon {
         type1.color ?? UIColor.yellow
     }
     
-    struct AttackSummary {
+    struct DefenseSummary {
         let value: Double
         let type: PokemonType
     }
     
-    var attackSummaries: [AttackSummary] {
+    var defenseSummaries: [DefenseSummary] {
         [
-            AttackSummary(value: againstBug, type: .bug),
-            AttackSummary(value: againstDark, type: .dark),
-            AttackSummary(value: againstDragon, type: .dragon),
-            AttackSummary(value: againstElectric, type: .electric),
-            AttackSummary(value: againstFairy, type: .fairy),
-            AttackSummary(value: againstFight, type: .fighting),
-            AttackSummary(value: againstFire, type: .fire),
-            AttackSummary(value: againstFlying, type: .flying),
-            AttackSummary(value: againstGhost, type: .ghost),
-            AttackSummary(value: againstGrass, type: .grass),
-            AttackSummary(value: againstGround, type: .ground),
-            AttackSummary(value: againstIce, type: .ice),
-            AttackSummary(value: againstNormal, type: .normal),
-            AttackSummary(value: againstPoison, type: .poison),
-            AttackSummary(value: againstPsychic, type: .psychic),
-            AttackSummary(value: againstRock, type: .rock),
-            AttackSummary(value: againstSteel, type: .steel),
-            AttackSummary(value: againstWater, type: .water),
+            DefenseSummary(value: againstBug, type: .bug),
+            DefenseSummary(value: againstDark, type: .dark),
+            DefenseSummary(value: againstDragon, type: .dragon),
+            DefenseSummary(value: againstElectric, type: .electric),
+            DefenseSummary(value: againstFairy, type: .fairy),
+            DefenseSummary(value: againstFight, type: .fighting),
+            DefenseSummary(value: againstFire, type: .fire),
+            DefenseSummary(value: againstFlying, type: .flying),
+            DefenseSummary(value: againstGhost, type: .ghost),
+            DefenseSummary(value: againstGrass, type: .grass),
+            DefenseSummary(value: againstGround, type: .ground),
+            DefenseSummary(value: againstIce, type: .ice),
+            DefenseSummary(value: againstNormal, type: .normal),
+            DefenseSummary(value: againstPoison, type: .poison),
+            DefenseSummary(value: againstPsychic, type: .psychic),
+            DefenseSummary(value: againstRock, type: .rock),
+            DefenseSummary(value: againstSteel, type: .steel),
+            DefenseSummary(value: againstWater, type: .water),
         ]
-    }
-}
-
-extension Pokemon.PokemonType: Decodable {
-    public init(from decoder: Decoder) throws {
-        self = try Pokemon.PokemonType(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
     }
 }
 
 extension Pokemon.PokemonType {
     var title: String? {
-        switch self {
-        case .unknown:
-            return nil
-        case .notApplicable:
-            return nil
-        default:
-            return rawValue.capitalized
-        }
-    }
-    
-    var isDisplayable: Bool {
-        switch self {
-        case .unknown:
-            return false
-        case .notApplicable:
-            return false
-        default:
-            return true
-        }
-    }
-    
-    static var displayableTypes: [Pokemon.PokemonType] {
-        Pokemon.PokemonType.allCases.compactMap { pokemonType in
-            pokemonType.isDisplayable ? pokemonType : nil
-        }
+        rawValue.capitalized
     }
     
     var image: UIImage? {
-        guard isDisplayable else { return nil }
-        
-        return UIImage(named: "PokemonTypes/\(rawValue)")
+        UIImage(named: "PokemonTypes/\(rawValue)")
     }
     
     var smallImage: UIImage? {
@@ -205,12 +179,9 @@ extension Pokemon.PokemonType {
     
     
     var color: UIColor? {
-        guard isDisplayable else { return nil }
         switch self {
         case .normal:
-            return .gray
-        case .notApplicable, .unknown:
-            return nil
+            return .fromRGB(0x919aa2)
         case .bug:
             return .fromRGB(0x83c400)
         case .dark:

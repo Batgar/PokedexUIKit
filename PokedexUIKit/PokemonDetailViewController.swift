@@ -66,7 +66,7 @@ class PokemonDetailViewController: UIViewController {
         return barChartView
     }()
     
-    private lazy var attackTypesPieChartView: PieChartView = {
+    private lazy var defenseTypesPieChartView: PieChartView = {
         let pieChartView = PieChartView()
         pieChartView.legend.enabled = false
         return pieChartView
@@ -82,9 +82,60 @@ class PokemonDetailViewController: UIViewController {
         return stackView
     }()
     
+    private lazy var pokemonImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.kf.setImage(
+            with: selectedPokemon.imageURL,
+            placeholder: UIImage(named: "International_Pokemon_logo")
+        )
+        return imageView
+    }()
+    
+    private lazy var abilityLabels: [UIView] = {
+        selectedPokemon.abilities.map {
+            let label = UILabel()
+            label.text = $0
+            label.numberOfLines = 0
+            label.setContentHuggingPriority(.required, for: .vertical)
+            return label
+        }
+    }()
+    
+    private lazy var pokemonAbilityStackView: UIStackView = {
+        let spacerView = UIView()
+        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        let stackView = UIStackView(arrangedSubviews: [
+            abilityLabels,
+            [spacerView],
+        ].flatMap { $0 })
+        
+        stackView.axis = .vertical
+        stackView.alignment = .top
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    private lazy var pokemonSummaryStackView: UIStackView = {
+        let spacerView = UIView()
+        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        let stackView = UIStackView(arrangedSubviews: [
+            pokemonImageView,
+            spacerView,
+        ])
+        
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        return stackView
+    }()
+    
     private lazy var pieChartStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            attackTypesPieChartView,
+            pokemonSummaryStackView,
+            pokemonAbilityStackView,
+            defenseTypesPieChartView,
         ])
         stackView.spacing = 16
         return stackView
@@ -115,7 +166,7 @@ class PokemonDetailViewController: UIViewController {
             attackChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             weightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             heightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
-            attackTypesPieChartView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
+            defenseTypesPieChartView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
         ])
         
         updateChartData()
@@ -126,7 +177,7 @@ class PokemonDetailViewController: UIViewController {
         updateHeightChartData()
         updateWeightChartData()
         
-        updateAttackTypesPieChartData()
+        updateDefensePieChartData()
     }
     
     func updateHeightChartData() {
@@ -244,35 +295,31 @@ class PokemonDetailViewController: UIViewController {
         weightChartView.data = data
     }
     
-    func updateAttackTypesPieChartData() {
-        let entries: [PieChartDataEntry] = selectedPokemon.attackSummaries.map {
-            // IMPORTANT: In a PieChart, no values (Entry) should have the same xIndex (even if from different DataSets), since no values can be drawn above each other.
-            return PieChartDataEntry(value: $0.value,
-                                     label: $0.type.title,
-                                     icon: $0.type.smallerImage)
+    func updateDefensePieChartData() {
+        let entries: [PieChartDataEntry] = selectedPokemon.defenseSummaries.map {
+            // IMPORTANT: In a PieChart, no values (Entry) should have the same
+            // xIndex (even if from different DataSets), since no values can be
+            // drawn above each other.
+            PieChartDataEntry(
+                value: $0.value,
+                label: $0.type.title,
+                icon: $0.type.smallerImage
+            )
         }
         
         let set = PieChartDataSet(entries: entries, label: "Attack Effectiveness")
         set.drawIconsEnabled = true
+        set.drawValuesEnabled = false
+        set.iconsOffset = CGPoint(x: 0, y: 60)
         set.sliceSpace = 2
-        
-        
-        set.colors = selectedPokemon.attackSummaries.compactMap { $0.type.color }
+        set.colors = selectedPokemon.defenseSummaries.compactMap { $0.type.color }
         
         let data = PieChartData(dataSet: set)
-        
-        let pFormatter = NumberFormatter()
-        pFormatter.numberStyle = .percent
-        pFormatter.maximumFractionDigits = 1
-        pFormatter.multiplier = 1
-        pFormatter.percentSymbol = " %"
-        data.setValueFormatter(DefaultValueFormatter(formatter: pFormatter))
-        
         data.setValueFont(.systemFont(ofSize: 11, weight: .light))
         data.setValueTextColor(.black)
         
-        attackTypesPieChartView.data = data
-        attackTypesPieChartView.highlightValues(nil)
+        defenseTypesPieChartView.data = data
+        defenseTypesPieChartView.highlightValues(nil)
     }
 }
 

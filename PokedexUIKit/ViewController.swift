@@ -32,12 +32,8 @@ class ViewController: UIViewController {
         
         let segmentActions: [SegmentAction] = [
             [.all],
-            Pokemon.PokemonType.displayableTypes.compactMap { pokemonType in
-                guard
-                    let title = pokemonType.title,
-                    pokemonType.isDisplayable
-                else { return nil }
-                return .normal(pokemonType: pokemonType)
+            Pokemon.PokemonType.allCases.map {
+                .normal(pokemonType: $0)
             }
         ].flatMap { $0 }
         
@@ -83,10 +79,10 @@ class ViewController: UIViewController {
         let pokemonTypeIndex = segmentedControl.selectedSegmentIndex
         
         guard
-            Pokemon.PokemonType.displayableTypes.indices.contains(pokemonTypeIndex)
+            Pokemon.PokemonType.allCases.indices.contains(pokemonTypeIndex)
         else { return }
         
-        let nextType = Pokemon.PokemonType.displayableTypes[pokemonTypeIndex]
+        let nextType = Pokemon.PokemonType.allCases[pokemonTypeIndex]
         
         Pokemon.pokemonOfType(type: nextType)
             .receive(on: DispatchQueue.main)
@@ -106,7 +102,10 @@ class ViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: layout
         )
-        collectionView.register(PokemonCell.self, forCellWithReuseIdentifier: PokemonCell.reuseIdentifier)
+        collectionView.register(
+            PokemonCell.self,
+            forCellWithReuseIdentifier: PokemonCell.reuseIdentifier
+        )
         collectionView.delegate = self
         return collectionView
     }()
@@ -120,6 +119,15 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(
+                primaryAction: UIAction(
+                    title: "Abilities",
+                    handler: showAbilitiesSelector
+                )
+            ),
+        ]
         
         view.addSubview(stackView)
         
@@ -187,7 +195,7 @@ class ViewController: UIViewController {
         let pokemon = pokemonToShow[indexPath.item]
         cell.nameLabel.text = pokemon.name
         cell.type1ImageView.image = pokemon.type1.image
-        cell.type2ImageView.image = pokemon.type2.image
+        cell.type2ImageView.image = pokemon.type2?.image
         
         if let imageURL = pokemon.imageURL {
             let task = cell.imageView.kf
@@ -221,6 +229,17 @@ extension ViewController: UICollectionViewDelegate {
             ),
             animated: true
         )
+    }
+}
+
+extension ViewController {
+    func showAbilitiesSelector(_ action: UIAction) {
+        guard let sender = action.sender as? UIBarButtonItem else { return }
+        
+        let abilitiesSelectorViewController = AbilitiesSelectorViewController()
+        abilitiesSelectorViewController.modalPresentationStyle = .popover
+        abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
+        present(abilitiesSelectorViewController, animated: true)
     }
 }
 
