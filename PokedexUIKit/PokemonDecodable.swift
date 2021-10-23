@@ -81,6 +81,25 @@ extension Pokemon {
             .eraseToAnyPublisher()
     }
     
+    struct Ability {
+        let pokemon: [Pokemon]
+        let ability: String
+    }
+    
+    static func decodeAllAbilities() -> AnyPublisher<[Ability], Error> {
+        decodeAllPokemon()
+            .tryMap { allPokemon in
+                // First get all unique ability strings.
+                let uniqueAbilities = Set<String>(allPokemon.flatMap { $0.abilities })
+                
+                return uniqueAbilities.map { ability in
+                    let allPokemonWithAbility = allPokemon.filter { $0.abilities.contains(ability) }
+                    return Ability(pokemon: allPokemonWithAbility, ability: ability)
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+    
     static func decodeAllPokemon() -> AnyPublisher<[Pokemon], Error> {
         guard
             let fileURL = Bundle.main.url(forResource: "pokemon", withExtension: "json")
@@ -124,7 +143,7 @@ enum PokemonError: Error {
 
 extension Pokemon {
     var color: UIColor {
-        type1.color ?? UIColor.yellow
+        type1.color
     }
     
     struct DefenseSummary {
@@ -178,7 +197,7 @@ extension Pokemon.PokemonType {
     }
     
     
-    var color: UIColor? {
+    var color: UIColor {
         switch self {
         case .normal:
             return .fromRGB(0x919aa2)

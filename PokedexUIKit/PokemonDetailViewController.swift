@@ -92,6 +92,32 @@ class PokemonDetailViewController: UIViewController {
         return imageView
     }()
     
+    private lazy var type1ImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = selectedPokemon.type1.smallImage
+        return imageView
+    }()
+    
+    private lazy var type2ImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = selectedPokemon.type2?.smallImage
+        return imageView
+    }()
+    
+    private lazy var typeStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            type1ImageView,
+            type2ImageView,
+        ])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        return stackView
+    }()
+    
     private lazy var abilityLabels: [UIView] = {
         selectedPokemon.abilities.map {
             let label = UILabel()
@@ -154,9 +180,11 @@ class PokemonDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        navigationItem.title = selectedPokemon.name
         
         view.addSubview(stackView)
+        
+        pokemonImageView.addSubview(typeStackView)
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -167,6 +195,15 @@ class PokemonDetailViewController: UIViewController {
             weightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             heightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             defenseTypesPieChartView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
+            
+            typeStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
+            typeStackView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),
+            
+            type1ImageView.widthAnchor.constraint(equalToConstant: 48),
+            type1ImageView.heightAnchor.constraint(equalToConstant: 48),
+            
+            type2ImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 48),
+            type2ImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 48),
         ])
         
         updateChartData()
