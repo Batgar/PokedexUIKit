@@ -39,7 +39,7 @@ class ViewController: UIViewController {
         
         let segmentedControl = UISegmentedControl(
             frame: .zero,
-            actions: segmentActions.compactMap { segmentAction in
+            actions: segmentActions.map { segmentAction in
                 switch segmentAction {
                 case .all:
                     return UIAction(title: "All") { [weak self] _ in
@@ -54,11 +54,7 @@ class ViewController: UIViewController {
                             ).store(in: &self.cancellables)
                     }
                 case .normal(let pokemonType):
-                    guard
-                        let title = pokemonType.title
-                    else { return nil }
-                    
-                    return UIAction(title: title) { [weak self] _ in
+                   return UIAction(title: pokemonType.title) { [weak self] _ in
                         guard let self = self else { return }
                         Pokemon.pokemonOfType(type: pokemonType)
                             .receive(on: DispatchQueue.main)

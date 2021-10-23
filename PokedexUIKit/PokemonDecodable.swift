@@ -157,7 +157,7 @@ extension Pokemon {
 }
 
 extension Pokemon.PokemonType {
-    var title: String? {
+    var title: String {
         rawValue.capitalized
     }
     
