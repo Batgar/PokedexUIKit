@@ -232,10 +232,30 @@ extension ViewController {
     func showAbilitiesSelector(_ action: UIAction) {
         guard let sender = action.sender as? UIBarButtonItem else { return }
         
-        let abilitiesSelectorViewController = AbilitiesSelectorViewController()
-        abilitiesSelectorViewController.modalPresentationStyle = .popover
-        abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
-        present(abilitiesSelectorViewController, animated: true)
+        Pokemon.decodeAllAbilities()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error): print("Error \(error)")
+                    case .finished: print("Publisher is finished")
+                    }
+                },
+                receiveValue: { [weak self] allAbilities in
+                    let abilitiesSelectorViewController = UINavigationController(
+                        rootViewController: AbilitiesSelectorViewController(
+                            allAbilities: allAbilities
+                        )
+                    )
+                    abilitiesSelectorViewController.modalPresentationStyle = .popover
+                    abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
+                    abilitiesSelectorViewController.preferredContentSize = CGSize(width: 550, height: 680)
+                    self?.present(abilitiesSelectorViewController, animated: true)
+                }
+            )
+            .store(in: &cancellables)
+        
+       
     }
 }
 

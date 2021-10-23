@@ -11,7 +11,7 @@ import UIKit
 
 struct Pokemon: Decodable, Hashable {
     
-    enum PokemonType: String, Decodable, CaseIterable {
+    enum PokemonType: String, Decodable, CaseIterable, Hashable {
         case fire
         case flying
         case grass
@@ -64,6 +64,11 @@ struct Pokemon: Decodable, Hashable {
     var imageURL: URL?
 }
 
+struct Ability: Hashable {
+    let pokemon: [Pokemon]
+    let ability: String
+}
+
 extension Pokemon {
     static func pokemonOfType(type: Pokemon.PokemonType) -> AnyPublisher<[Pokemon], Error> {
         decodeAllPokemon()
@@ -81,21 +86,19 @@ extension Pokemon {
             .eraseToAnyPublisher()
     }
     
-    struct Ability {
-        let pokemon: [Pokemon]
-        let ability: String
-    }
-    
     static func decodeAllAbilities() -> AnyPublisher<[Ability], Error> {
         decodeAllPokemon()
             .tryMap { allPokemon in
                 // First get all unique ability strings.
                 let uniqueAbilities = Set<String>(allPokemon.flatMap { $0.abilities })
                 
-                return uniqueAbilities.map { ability in
-                    let allPokemonWithAbility = allPokemon.filter { $0.abilities.contains(ability) }
-                    return Ability(pokemon: allPokemonWithAbility, ability: ability)
-                }
+                return uniqueAbilities
+                    .map { ability in
+                        let allPokemonWithAbility = allPokemon.filter { $0.abilities.contains(ability) }
+                        return Ability(pokemon: allPokemonWithAbility, ability: ability)
+                    }.sorted(by: {
+                        $0.ability < $1.ability
+                    })
             }
             .eraseToAnyPublisher()
     }
@@ -193,6 +196,12 @@ extension Pokemon.PokemonType {
     var smallerImage: UIImage? {
         image.flatMap {
             $0.imageWith(newSize: CGSize(width: 30, height: 30))
+        }
+    }
+    
+    var smallestImage: UIImage? {
+        image.flatMap {
+            $0.imageWith(newSize: CGSize(width: 20, height: 20))
         }
     }
     
