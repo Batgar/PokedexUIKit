@@ -215,7 +215,7 @@ extension ViewController: UICollectionViewDelegate {
         let selectedPokemon = pokemonToShow[indexPath.item]
         
         navigationController?.pushViewController(
-            BarChartViewController(
+            PokemonDetailViewController(
                 allPokemon: allPokemon,
                 selectedPokemon: selectedPokemon
             ),

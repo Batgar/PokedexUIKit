@@ -812,7 +812,7 @@
     "speed": 72,
     "type1": "normal",
     "type2": "dark",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -854,7 +854,7 @@
     "speed": 77,
     "type1": "normal",
     "type2": "dark",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -1111,7 +1111,7 @@
     "speed": 110,
     "type1": "electric",
     "type2": "electric",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -1153,7 +1153,7 @@
     "speed": 40,
     "type1": "ground",
     "type2": "ice",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -1195,7 +1195,7 @@
     "speed": 65,
     "type1": "ground",
     "type2": "ice",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -1581,7 +1581,7 @@
     "speed": 65,
     "type1": "fire",
     "type2": "ice",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -1623,7 +1623,7 @@
     "speed": 109,
     "type1": "fire",
     "type2": "ice",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -2138,7 +2138,7 @@
     "speed": 90,
     "type1": "ground",
     "type2": "ground",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -2180,7 +2180,7 @@
     "speed": 110,
     "type1": "ground",
     "type2": "ground",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -2222,7 +2222,7 @@
     "speed": 90,
     "type1": "normal",
     "type2": "dark",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -2264,7 +2264,7 @@
     "speed": 115,
     "type1": "normal",
     "type2": "dark",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -3166,7 +3166,7 @@
     "speed": 20,
     "type1": "rock",
     "type2": "ground",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -3208,7 +3208,7 @@
     "speed": 35,
     "type1": "rock",
     "type2": "ground",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -3250,7 +3250,7 @@
     "speed": 45,
     "type1": "rock",
     "type2": "ground",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -3766,7 +3766,7 @@
     "speed": 25,
     "type1": "poison",
     "type2": "poison",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -3809,7 +3809,7 @@
     "speed": 50,
     "type1": "poison",
     "type2": "poison",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -4411,7 +4411,7 @@
     "speed": 45,
     "type1": "grass",
     "type2": "psychic",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -4496,7 +4496,7 @@
     "speed": 45,
     "type1": "ground",
     "type2": "fire",
-    "weight_kg": "",
+    
     "generation": 1,
     "is_legendary": 0
   },
@@ -30941,7 +30941,7 @@
     "speed": 80,
     "type1": "psychic",
     "type2": "ghost",
-    "weight_kg": "",
+    
     "generation": 6,
     "is_legendary": 1
   },
@@ -32016,7 +32016,7 @@
     "speed": 82,
     "type1": "rock",
     "type2": "",
-    "weight_kg": "",
+    
     "generation": 7,
     "is_legendary": 0
   },

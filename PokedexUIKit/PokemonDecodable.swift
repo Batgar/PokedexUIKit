@@ -58,10 +58,12 @@ struct Pokemon: Decodable, Hashable {
     let againstBug: Double
     let againstDark: Double
     let againstDragon: Double
+    let attack: Double
     var heightM: Double?
     let name: String
     let type1: PokemonType
     let type2: PokemonType
+    var weightKg: Double?
     
     var index: Int?
     var imageURL: URL?
