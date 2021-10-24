@@ -56,6 +56,7 @@ struct Pokemon: Decodable, Hashable {
    
     let attack: Double
     var heightM: Double?
+    let hp: Double
     let name: String
     let pokedexNumber: Int
     let type1: PokemonType

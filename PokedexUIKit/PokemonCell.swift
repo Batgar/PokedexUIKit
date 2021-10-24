@@ -10,9 +10,18 @@ import UIKit
 class PokemonCell: UICollectionViewCell {
     static let reuseIdentifier = "PokemonCell"
     
+    let pokedexNumberLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.numberOfLines = 1
+        return label
+    }()
+    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .horizontal)
         label.numberOfLines = 1
         return label
     }()
@@ -48,9 +57,22 @@ class PokemonCell: UICollectionViewCell {
         return stackView
     }()
     
+    private lazy var pokemonIdentifierStackView: UIStackView = {
+        let spacerView = UIView()
+        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        let stackView = UIStackView(arrangedSubviews: [
+            pokedexNumberLabel,
+            nameLabel,
+            spacerView,
+        ])
+        stackView.spacing = 16
+        return stackView
+    }()
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            nameLabel,
+            pokemonIdentifierStackView,
             imageView,
         ])
         stackView.axis = .vertical

@@ -227,6 +227,7 @@ class ViewController: UIViewController {
         
         let pokemon = sections[indexPath.section].pokemon[indexPath.item]
         cell.nameLabel.text = pokemon.name
+        cell.pokedexNumberLabel.text = "#\(pokemon.pokedexNumber)"
         cell.type1ImageView.image = pokemon.type1.image
         cell.type2ImageView.image = pokemon.type2?.image
         
