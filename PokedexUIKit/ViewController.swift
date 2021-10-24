@@ -226,14 +226,14 @@ class ViewController: UIViewController {
         else { return nil }
         
         let pokemon = sections[indexPath.section].pokemon[indexPath.item]
-        cell.nameLabel.text = pokemon.name
-        cell.pokedexNumberLabel.text = "#\(pokemon.pokedexNumber)"
-        cell.type1ImageView.image = pokemon.type1.image
-        cell.type2ImageView.image = pokemon.type2?.image
-        cell.stackBackgroundView.backgroundColor = pokemon.type1.color.withAlphaComponent(0.2)
+        cell.pokemonView.nameLabel.text = pokemon.name
+        cell.pokemonView.pokedexNumberLabel.text = "#\(pokemon.pokedexNumber)"
+        cell.pokemonView.type1ImageView.image = pokemon.type1.image
+        cell.pokemonView.type2ImageView.image = pokemon.type2?.image
+        cell.pokemonView.stackBackgroundView.backgroundColor = pokemon.type1.color.withAlphaComponent(0.2)
         
         if let imageURL = pokemon.imageURL {
-            let task = cell.imageView.kf
+            let task = cell.pokemonView.imageView.kf
                 .setImage(
                     with: imageURL,
                     placeholder: UIImage(named: "International_Pokemon_logo")

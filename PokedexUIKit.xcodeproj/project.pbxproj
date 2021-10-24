@@ -27,6 +27,7 @@
 		6C82C2252724939800BC3FD4 /* AbilityTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C82C2242724939800BC3FD4 /* AbilityTableViewCell.swift */; };
 		6C82C227272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C82C226272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift */; };
 		6C82C229272583DD00BC3FD4 /* AbilitiesCellProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C82C228272583DD00BC3FD4 /* AbilitiesCellProvider.swift */; };
+		6C82C22B2725E48600BC3FD4 /* PokemonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C82C22A2725E48500BC3FD4 /* PokemonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		6C82C2242724939800BC3FD4 /* AbilityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilityTableViewCell.swift; sourceTree = "<group>"; };
 		6C82C226272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilitiesTypeAheadViewController.swift; sourceTree = "<group>"; };
 		6C82C228272583DD00BC3FD4 /* AbilitiesCellProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilitiesCellProvider.swift; sourceTree = "<group>"; };
+		6C82C22A2725E48500BC3FD4 /* PokemonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +138,7 @@
 				6C82C2242724939800BC3FD4 /* AbilityTableViewCell.swift */,
 				6C82C226272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift */,
 				6C82C228272583DD00BC3FD4 /* AbilitiesCellProvider.swift */,
+				6C82C22A2725E48500BC3FD4 /* PokemonView.swift */,
 			);
 			path = PokedexUIKit;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				6C46ADD72720B4C000E05DF4 /* SceneDelegate.swift in Sources */,
 				6C82C223272448AC00BC3FD4 /* AbilitiesSelectorViewController.swift in Sources */,
 				6C82C229272583DD00BC3FD4 /* AbilitiesCellProvider.swift in Sources */,
+				6C82C22B2725E48600BC3FD4 /* PokemonView.swift in Sources */,
 				6C82C21F2723597000BC3FD4 /* PokemonDetailViewController.swift in Sources */,
 				6C82C2252724939800BC3FD4 /* AbilityTableViewCell.swift in Sources */,
 			);
