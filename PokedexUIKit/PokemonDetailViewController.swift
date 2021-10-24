@@ -115,6 +115,9 @@ class PokemonDetailViewController: UIViewController {
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
         return stackView
     }()
     
@@ -176,17 +179,59 @@ class PokemonDetailViewController: UIViewController {
         stackView.axis = .vertical
         return stackView
     }()
+    
+    let pokedexNumberLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.numberOfLines = 1
+        return label
+    }()
+    
+    let nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.numberOfLines = 1
+        return label
+    }()
+    
+    lazy var stackBackgroundView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10.0
+        return view
+    }()
+    
+    private lazy var pokemonIdentifierStackView: UIStackView = {
+        let spacerView = UIView()
+        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        let stackView = UIStackView(arrangedSubviews: [
+            pokedexNumberLabel,
+            nameLabel,
+            spacerView,
+        ])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 16
+        return stackView
+    }()
    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = selectedPokemon.name
+        nameLabel.text = selectedPokemon.name
+        pokedexNumberLabel.text = "#\(selectedPokemon.pokedexNumber)"
+        stackBackgroundView.backgroundColor = selectedPokemon.type1.color.withAlphaComponent(0.2)
         
         view.backgroundColor = .systemBackground
         
         view.addSubview(stackView)
         
         pokemonImageView.addSubview(typeStackView)
+        pokemonImageView.addSubview(pokemonIdentifierStackView)
+        pokemonImageView.insertSubview(stackBackgroundView, at: 0)
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -201,6 +246,10 @@ class PokemonDetailViewController: UIViewController {
             pokemonImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             pokemonImageView.heightAnchor.constraint(equalTo: pokemonImageView.widthAnchor),
             
+            pokemonIdentifierStackView.leadingAnchor.constraint(equalTo: pokemonImageView.leadingAnchor),
+            pokemonIdentifierStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
+            pokemonIdentifierStackView.topAnchor.constraint(equalTo: pokemonImageView.topAnchor),
+            
             typeStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
             typeStackView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),
             
@@ -209,6 +258,11 @@ class PokemonDetailViewController: UIViewController {
             
             type2ImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 48),
             type2ImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 48),
+            
+            stackBackgroundView.topAnchor.constraint(equalTo: pokemonImageView.topAnchor),
+            stackBackgroundView.leadingAnchor.constraint(equalTo: pokemonImageView.leadingAnchor),
+            stackBackgroundView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),
+            stackBackgroundView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
         ])
         
         updateChartData()
