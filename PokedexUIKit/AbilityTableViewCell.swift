@@ -12,8 +12,8 @@ class AbilityTableViewCell: UITableViewCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 0
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        label.numberOfLines = 2
+        label.minimumScaleFactor = 0.2
         return label
     }()
     

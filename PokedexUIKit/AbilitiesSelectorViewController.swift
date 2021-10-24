@@ -7,9 +7,12 @@ The application's primary table view controller showing a list of products.
 
 import UIKit
 
-class AbilitiesSelectorViewController: UIViewController {
-    private lazy var dataSource: UITableViewDiffableDataSource<Section, Ability> = {
-        UITableViewDiffableDataSource<Section, Ability>(
+class AbilitiesSelectorViewController: UIViewController, AbilitiesCellProvider {
+    private var selectedAbilities: [Ability] = []
+    private let completion: ([Ability]) -> Void
+    
+    lazy var dataSource: UITableViewDiffableDataSource<AbilitiesSection, Ability> = {
+        UITableViewDiffableDataSource<AbilitiesSection, Ability>(
             tableView: tableView,
             cellProvider: cellProvider
         )
@@ -22,7 +25,16 @@ class AbilitiesSelectorViewController: UIViewController {
             AbilityTableViewCell.self,
             forCellReuseIdentifier: AbilityTableViewCell.reuseIdentifier
         )
+        tableView.allowsMultipleSelection = true
+        tableView.delegate = self
         return tableView
+    }()
+    
+    private lazy var typeAheadViewController: AbilitiesTypeAheadViewController = {
+        let viewController = AbilitiesTypeAheadViewController() { [weak self] selectedAbility in
+            self?.addSelectedAbility(selectedAbility)
+        }
+        return viewController
     }()
     
     // MARK: - Constants
@@ -42,12 +54,14 @@ class AbilitiesSelectorViewController: UIViewController {
     
     // MARK: - View Life Cycle
     
-    private let allAbilities: [Ability]
+    let allAbilities: [Ability]
     
     init(
-        allAbilities: [Ability]
+        allAbilities: [Ability],
+        completion: @escaping ([Ability]) -> Void
     ) {
         self.allAbilities = allAbilities
+        self.completion = completion
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -78,19 +92,17 @@ class AbilitiesSelectorViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             systemItem: .cancel,
             primaryAction: UIAction() { [weak self] _ in
+                self?.selectedAbilities = []
                 self?.navigationController?.dismiss(animated: true, completion: nil)
             }
         )
         
         refresh()
-    
-        //setupDataModel()
-        
-        //resultsTableController = ResultsTableController()
-        //resultsTableController.suggestedSearchDelegate = self // So we can be notified when a suggested search token is selected.
-        
-        searchController = UISearchController(searchResultsController: UITableViewController())
-        //searchController.searchResultsUpdater = self
+       
+        searchController = UISearchController(
+            searchResultsController: typeAheadViewController
+        )
+        searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
         searchController.searchBar.searchTextField.placeholder = NSLocalizedString("Enter a search term", comment: "")
         searchController.searchBar.returnKeyType = .done
@@ -111,23 +123,6 @@ class AbilitiesSelectorViewController: UIViewController {
             The search controller should be presented modally and match the physical size of this view controller.
         */
         definesPresentationContext = true
-    }
-    
-    private struct Section: Hashable {
-        let index: Int
-    }
-    
-    private func refresh() {
-        let sections = [Section(index: 1)]
-        
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Ability>()
-        snapshot.appendSections(sections)
-        
-        sections.forEach { section in
-            snapshot.appendItems(allAbilities, toSection: section)
-        }
-        
-        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -166,49 +161,13 @@ class AbilitiesSelectorViewController: UIViewController {
         
         // No longer interested in the current activity.
         view.window?.windowScene?.userActivity = nil
+        
+        if isBeingDismissed || (navigationController?.isBeingDismissed ?? false) {
+            completion(selectedAbilities)
+        }
     }
     
-    private func cellProvider(
-        _ tableView: UITableView,
-        _ indexPath: IndexPath,
-        _ itemIdentifier: Ability
-    ) -> UITableViewCell? {
-        guard
-            allAbilities.indices.contains(indexPath.item),
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: AbilityTableViewCell.reuseIdentifier,
-                for: indexPath
-            ) as? AbilityTableViewCell
-        else { return nil }
-        
-        let ability = allAbilities[indexPath.item]
-        cell.nameLabel.text = "\(ability.ability) - \(ability.pokemon.count)"
-        
-        let uniqueTypes = Set<Pokemon.PokemonType>(ability.pokemon.map { $0.type1 })
-        
-        let spacerView = UIView()
-        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        
-        let arrangedSubviews = cell.typeStackView.arrangedSubviews
-        
-        arrangedSubviews.forEach {
-            $0.removeFromSuperview()
-        }
-        
-        cell.typeStackView.addArrangedSubview(spacerView)
-        
-        Array(uniqueTypes)
-            .sorted(by: { $0.rawValue < $1.rawValue})
-            .forEach { pokemonType in
-                let imageView = UIImageView(image: pokemonType.smallerImage)
-                imageView.contentMode = .scaleAspectFit
-                cell.typeStackView.addArrangedSubview(
-                    imageView
-                )
-            }
-        
-        return cell
-    }
+    
 
 }
 
@@ -238,11 +197,11 @@ extension AbilitiesSelectorViewController: UISearchBarDelegate {
 // Use these delegate functions for additional control over the search controller.
 
 extension AbilitiesSelectorViewController: UISearchControllerDelegate {
-    
-    // We are being asked to present the search controller, so from the start - show suggested searches.
+    // We are being asked to present the search controller, so from the
+    // start - show suggested searches.
     func presentSearchController(_ searchController: UISearchController) {
         searchController.showsSearchResultsController = true
-        //setToSuggestedSearches()
+        setToSuggestedSearches()
     }
 }
 
@@ -287,28 +246,76 @@ extension AbilitiesSelectorViewController: UICollectionViewDelegate {}
 
 extension AbilitiesSelectorViewController: UICollectionViewDelegateFlowLayout {}
 
-// MARK: - Table View
-
-/*extension UITableViewController {
-    
-    static let productCellIdentifier = "cellID"
-    
-    // Used by both MainTableViewController and ResultsTableController to define its table cells.
-    func configureCell(_ cell: UITableViewCell, forProduct product: Product) {
-        let textTitle = NSMutableAttributedString(string: product.title)
-        let textColor = ResultsTableController.suggestedColor(fromIndex: product.color)
-        
-        textTitle.addAttribute(NSAttributedString.Key.foregroundColor,
-                               value: textColor,
-                               range: NSRange(location: 0, length: textTitle.length))
-        cell.textLabel?.attributedText = textTitle
-        
-        // Build the price and year as the detail right string.
-        let priceString = product.formattedPrice()
-        let yearString = product.formattedDate()
-        cell.detailTextLabel?.text = "\(priceString!) | \(yearString!)"
-        cell.accessoryType = .disclosureIndicator
-        cell.imageView?.image = nil
+extension AbilitiesSelectorViewController: UISearchResultsUpdating {
+    func setToSuggestedSearches() {
+        // Show suggested searches only if we don't have a search token in the search field.
+        if searchController.searchBar.searchTextField.tokens.isEmpty {
+            //resultsTableController.showSuggestedSearches = true
+            
+            // We are no longer interested in cell navigating, since we are now showing the suggested searches.
+            //resultsTableController.tableView.delegate = resultsTableController
+        }
     }
     
-}*/
+    // Called when the search bar's text has changed or when the search bar becomes first responder.
+    func updateSearchResults(for searchController: UISearchController) {
+        guard
+            let userEnteredSearchTerm = searchController.searchBar.text
+        else { return }
+        
+        let strippedString = userEnteredSearchTerm.trimmingCharacters(
+            in: CharacterSet.whitespaces
+        ).lowercased()
+        
+        let filteredAbilities = allAbilities.filter {
+            $0.ability.lowercased().hasPrefix(strippedString)
+        }
+        
+        // We now have the abilities we want to show in the
+        // filtered view, so show them.
+        typeAheadViewController.allAbilities = filteredAbilities
+    }
+}
+
+extension AbilitiesSelectorViewController: UITableViewDelegate {
+    func addSelectedAbility(_ selectedAbility: Ability) {
+        guard
+            !selectedAbilities.contains(where: {
+                $0 == selectedAbility
+            })
+        else { return }
+        
+        selectedAbilities.append(selectedAbility)
+        
+        selectedAbilities = selectedAbilities.sorted(by: { $0 < $1 })
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard
+            allAbilities.indices.contains(indexPath.item)
+        else { return }
+        
+        let selectedAbility = allAbilities[indexPath.item]
+        
+        addSelectedAbility(selectedAbility)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard
+            allAbilities.indices.contains(indexPath.item)
+        else { return }
+        
+        let selectedAbility = allAbilities[indexPath.item]
+        
+        guard
+            let indexToRemove = selectedAbilities.firstIndex(where: {
+                $0 == selectedAbility
+            })
+        else { return }
+        
+        selectedAbilities.remove(at: indexToRemove)
+        
+        selectedAbilities = selectedAbilities.sorted(by: { $0 < $1 })
+    }
+}
+

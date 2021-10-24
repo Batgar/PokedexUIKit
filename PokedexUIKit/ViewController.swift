@@ -153,10 +153,25 @@ class ViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func updateWithAbilities(_ abilities: [Ability]) {
+        // For now just see if we can just show the given Pokemon within the main list seamlessly.
+        // Eventually, make sections!
+        self.pokemonToShow = abilities.flatMap { $0.pokemon }
+    }
+    
     var allPokemon: [Pokemon] = []
 
     private struct Section: Hashable {
         let index: Int
+        let abilityName: String?
+        
+        init(
+            index: Int,
+            abilityName: String? = nil
+        ) {
+            self.index = index
+            self.abilityName = abilityName
+        }
     }
     
     private var pokemonToShow: [Pokemon] = [] {
@@ -245,11 +260,20 @@ extension ViewController {
                     let abilitiesSelectorViewController = UINavigationController(
                         rootViewController: AbilitiesSelectorViewController(
                             allAbilities: allAbilities
-                        )
+                        ) { [weak self] selectedAbilities in
+                            guard let self = self else { return }
+                            guard
+                                !selectedAbilities.isEmpty
+                            else {
+                                self.pokemonToShow = self.allPokemon
+                                return
+                            }
+                            
+                            self.updateWithAbilities(selectedAbilities)
+                        }
                     )
                     abilitiesSelectorViewController.modalPresentationStyle = .popover
                     abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
-                    abilitiesSelectorViewController.preferredContentSize = CGSize(width: 550, height: 680)
                     self?.present(abilitiesSelectorViewController, animated: true)
                 }
             )

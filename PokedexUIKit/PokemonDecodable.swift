@@ -64,7 +64,11 @@ struct Pokemon: Decodable, Hashable {
     var imageURL: URL?
 }
 
-struct Ability: Hashable {
+struct Ability: Comparable, Hashable {
+    static func < (lhs: Ability, rhs: Ability) -> Bool {
+        lhs.ability < rhs.ability
+    }
+    
     let pokemon: [Pokemon]
     let ability: String
 }
