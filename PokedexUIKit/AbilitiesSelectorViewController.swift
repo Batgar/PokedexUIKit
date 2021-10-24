@@ -72,6 +72,8 @@ class AbilitiesSelectorViewController: UIViewController, AbilitiesCellProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .systemBackground
+        
         view.addSubview(tableView)
         
         NSLayoutConstraint.activate([

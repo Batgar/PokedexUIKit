@@ -6,6 +6,7 @@
 //
 
 import Combine
+import Kingfisher
 import Foundation
 import UIKit
 
@@ -56,12 +57,14 @@ struct Pokemon: Decodable, Hashable {
     let attack: Double
     var heightM: Double?
     let name: String
+    let pokedexNumber: Int
     let type1: PokemonType
     var type2: PokemonType?
     var weightKg: Double?
     
-    var index: Int?
-    var imageURL: URL?
+    var imageURL: URL? {
+        URL(string: "https://d1l90ic7yquy2f.cloudfront.net/\(pokedexNumber)-1024.png")
+    }
 }
 
 struct Ability: Comparable, Hashable {
@@ -126,14 +129,7 @@ extension Pokemon {
                 
                 let pokemon = try decoder.decode([Pokemon].self, from: jsonData)
                 
-                let indexedPokemon = pokemon.enumerated().map { index, pokemon -> Pokemon in
-                    var indexedPokemon = pokemon
-                    indexedPokemon.index = index + 1
-                    indexedPokemon.imageURL = URL(string: "https://d18bqzgu48wusx.cloudfront.net/\(index + 1).png")!
-                    return indexedPokemon
-                }
-                
-                passthroughSubject.send(indexedPokemon)
+                passthroughSubject.send(pokemon)
                 
             } catch {
                 passthroughSubject.send(completion: .failure(error))

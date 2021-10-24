@@ -182,6 +182,8 @@ class PokemonDetailViewController: UIViewController {
         
         navigationItem.title = selectedPokemon.name
         
+        view.backgroundColor = .systemBackground
+        
         view.addSubview(stackView)
         
         pokemonImageView.addSubview(typeStackView)
@@ -195,6 +197,9 @@ class PokemonDetailViewController: UIViewController {
             weightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             heightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             defenseTypesPieChartView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
+            
+            pokemonImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            pokemonImageView.heightAnchor.constraint(equalTo: pokemonImageView.widthAnchor),
             
             typeStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
             typeStackView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),

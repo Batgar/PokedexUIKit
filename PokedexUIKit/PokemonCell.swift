@@ -73,8 +73,8 @@ class PokemonCell: UICollectionViewCell {
             contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            imageView.widthAnchor.constraint(greaterThanOrEqualToConstant: 256),
-            imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 256),
+            imageView.widthAnchor.constraint(equalToConstant: 256),
+            imageView.heightAnchor.constraint(equalToConstant: 256),
             
             typeStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             typeStackView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),

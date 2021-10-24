@@ -153,10 +153,27 @@ class ViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private var sections: [Section] = []
+    
     private func updateWithAbilities(_ abilities: [Ability]) {
-        // For now just see if we can just show the given Pokemon within the main list seamlessly.
-        // Eventually, make sections!
-        self.pokemonToShow = abilities.flatMap { $0.pokemon }
+        let sections = abilities.enumerated().map { index, ability in
+            Section(
+                index: index,
+                abilityName: ability.ability,
+                pokemon: ability.pokemon
+            )
+        }
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Pokemon>()
+        snapshot.appendSections(sections)
+        
+        sections.enumerated().forEach { index, section in
+            snapshot.appendItems(abilities[index].pokemon, toSection: section)
+        }
+        
+        self.sections = sections
+        
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
     
     var allPokemon: [Pokemon] = []
@@ -164,19 +181,22 @@ class ViewController: UIViewController {
     private struct Section: Hashable {
         let index: Int
         let abilityName: String?
+        let pokemon: [Pokemon]
         
         init(
             index: Int,
-            abilityName: String? = nil
+            abilityName: String? = nil,
+            pokemon: [Pokemon]
         ) {
             self.index = index
             self.abilityName = abilityName
+            self.pokemon = pokemon
         }
     }
     
     private var pokemonToShow: [Pokemon] = [] {
         didSet {
-            let sections = [Section(index: 1)]
+            let sections = [Section(index: 1, pokemon: pokemonToShow)]
             
             var snapshot = NSDiffableDataSourceSnapshot<Section, Pokemon>()
             snapshot.appendSections(sections)
@@ -184,6 +204,8 @@ class ViewController: UIViewController {
             sections.forEach { section in
                 snapshot.appendItems(pokemonToShow, toSection: section)
             }
+            
+            self.sections = sections
             
             dataSource.apply(snapshot, animatingDifferences: true)
         }
@@ -194,16 +216,16 @@ class ViewController: UIViewController {
         _ indexPath: IndexPath,
         _ itemIdentifier: Pokemon
     ) -> UICollectionViewCell? {
-        print("pokemon - \(indexPath.item)")
         guard
-            pokemonToShow.indices.contains(indexPath.item),
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].pokemon.indices.contains(indexPath.item),
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: PokemonCell.reuseIdentifier,
                 for: indexPath
             ) as? PokemonCell
         else { return nil }
         
-        let pokemon = pokemonToShow[indexPath.item]
+        let pokemon = sections[indexPath.section].pokemon[indexPath.item]
         cell.nameLabel.text = pokemon.name
         cell.type1ImageView.image = pokemon.type1.image
         cell.type2ImageView.image = pokemon.type2?.image
