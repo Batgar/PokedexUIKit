@@ -230,6 +230,7 @@ class ViewController: UIViewController {
         cell.pokedexNumberLabel.text = "#\(pokemon.pokedexNumber)"
         cell.type1ImageView.image = pokemon.type1.image
         cell.type2ImageView.image = pokemon.type2?.image
+        cell.stackBackgroundView.backgroundColor = pokemon.type1.color.withAlphaComponent(0.2)
         
         if let imageURL = pokemon.imageURL {
             let task = cell.imageView.kf
@@ -251,10 +252,11 @@ class ViewController: UIViewController {
 extension ViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard
-            pokemonToShow.indices.contains(indexPath.item)
+            sections.indices.contains(indexPath.section),
+            sections[indexPath.section].pokemon.indices.contains(indexPath.item)
         else { return }
         
-        let selectedPokemon = pokemonToShow[indexPath.item]
+        let selectedPokemon = sections[indexPath.section].pokemon[indexPath.item]
         
         navigationController?.pushViewController(
             PokemonDetailViewController(

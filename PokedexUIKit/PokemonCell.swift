@@ -54,6 +54,9 @@ class PokemonCell: UICollectionViewCell {
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
+        stackView.spacing = 4
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
         return stackView
     }()
     
@@ -70,6 +73,13 @@ class PokemonCell: UICollectionViewCell {
         return stackView
     }()
     
+    lazy var stackBackgroundView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10.0
+        return view
+    }()
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
             pokemonIdentifierStackView,
@@ -77,6 +87,8 @@ class PokemonCell: UICollectionViewCell {
         ])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.isLayoutMarginsRelativeArrangement = true
+        stackView.layoutMargins = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
         return stackView
     }()
     
@@ -88,6 +100,7 @@ class PokemonCell: UICollectionViewCell {
         contentView.addSubview(stackView)
         
         stackView.addSubview(typeStackView)
+        stackView.insertSubview(stackBackgroundView, at: 0)
         
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: topAnchor),
@@ -111,6 +124,11 @@ class PokemonCell: UICollectionViewCell {
             stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            
+            stackBackgroundView.topAnchor.constraint(equalTo: stackView.topAnchor),
+            stackBackgroundView.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            stackBackgroundView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
+            stackBackgroundView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
         ])
     }
     
