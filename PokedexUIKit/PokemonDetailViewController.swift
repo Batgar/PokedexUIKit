@@ -82,45 +82,6 @@ class PokemonDetailViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var pokemonImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.kf.setImage(
-            with: selectedPokemon.imageURL,
-            placeholder: UIImage(named: "International_Pokemon_logo")
-        )
-        return imageView
-    }()
-    
-    private lazy var type1ImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = selectedPokemon.type1.smallImage
-        return imageView
-    }()
-    
-    private lazy var type2ImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = selectedPokemon.type2?.smallImage
-        return imageView
-    }()
-    
-    private lazy var typeStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [
-            type1ImageView,
-            type2ImageView,
-        ])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.spacing = 4
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets.init(top: 8, left: 8, bottom: 8, right: 8)
-        return stackView
-    }()
-    
     private lazy var abilityLabels: [UIView] = {
         selectedPokemon.abilities.map {
             let label = UILabel()
@@ -151,7 +112,7 @@ class PokemonDetailViewController: UIViewController {
         spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
         
         let stackView = UIStackView(arrangedSubviews: [
-            pokemonImageView,
+            pokemonView,
             spacerView,
         ])
         
@@ -180,58 +141,27 @@ class PokemonDetailViewController: UIViewController {
         return stackView
     }()
     
-    let pokedexNumberLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.numberOfLines = 1
-        return label
+    lazy var pokemonView: PokemonView = {
+        let pokemonView = PokemonView()
+        return pokemonView
     }()
     
-    let nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    lazy var stackBackgroundView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 10.0
-        return view
-    }()
-    
-    private lazy var pokemonIdentifierStackView: UIStackView = {
-        let spacerView = UIView()
-        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        
-        let stackView = UIStackView(arrangedSubviews: [
-            pokedexNumberLabel,
-            nameLabel,
-            spacerView,
-        ])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 16
-        return stackView
-    }()
-   
     override func viewDidLoad() {
         super.viewDidLoad()
         
         navigationItem.title = selectedPokemon.name
-        nameLabel.text = selectedPokemon.name
-        pokedexNumberLabel.text = "#\(selectedPokemon.pokedexNumber)"
-        stackBackgroundView.backgroundColor = selectedPokemon.type1.color.withAlphaComponent(0.2)
+        pokemonView.nameLabel.text = selectedPokemon.name
+        pokemonView.pokedexNumberLabel.text = "#\(selectedPokemon.pokedexNumber)"
+        pokemonView.stackBackgroundView.backgroundColor = selectedPokemon.type1.color.withAlphaComponent(0.2)
+        pokemonView.imageView.kf.setImage(
+            with: selectedPokemon.imageURL,
+            placeholder: UIImage(named: "International_Pokemon_logo")
+        )
+
         
         view.backgroundColor = .systemBackground
         
         view.addSubview(stackView)
-        
-        pokemonImageView.addSubview(typeStackView)
-        pokemonImageView.addSubview(pokemonIdentifierStackView)
-        pokemonImageView.insertSubview(stackBackgroundView, at: 0)
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -243,26 +173,8 @@ class PokemonDetailViewController: UIViewController {
             heightChartView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
             defenseTypesPieChartView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.5),
             
-            pokemonImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
-            pokemonImageView.heightAnchor.constraint(equalTo: pokemonImageView.widthAnchor),
-            
-            pokemonIdentifierStackView.leadingAnchor.constraint(equalTo: pokemonImageView.leadingAnchor),
-            pokemonIdentifierStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
-            pokemonIdentifierStackView.topAnchor.constraint(equalTo: pokemonImageView.topAnchor),
-            
-            typeStackView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
-            typeStackView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),
-            
-            type1ImageView.widthAnchor.constraint(equalToConstant: 48),
-            type1ImageView.heightAnchor.constraint(equalToConstant: 48),
-            
-            type2ImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 48),
-            type2ImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 48),
-            
-            stackBackgroundView.topAnchor.constraint(equalTo: pokemonImageView.topAnchor),
-            stackBackgroundView.leadingAnchor.constraint(equalTo: pokemonImageView.leadingAnchor),
-            stackBackgroundView.bottomAnchor.constraint(equalTo: pokemonImageView.bottomAnchor),
-            stackBackgroundView.trailingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor),
+            pokemonView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.3),
+            pokemonView.heightAnchor.constraint(equalTo: pokemonView.widthAnchor),
         ])
         
         updateChartData()
