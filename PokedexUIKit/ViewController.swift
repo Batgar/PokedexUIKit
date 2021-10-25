@@ -16,79 +16,12 @@ class ViewController: UIViewController {
     
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            segmentedControl,
             collectionView,
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         return stackView
     }()
-    
-    private lazy var segmentedControl: UISegmentedControl = {
-        enum SegmentAction {
-            case normal(pokemonType: Pokemon.PokemonType)
-            case all
-        }
-        
-        let segmentActions: [SegmentAction] = [
-            [.all],
-            Pokemon.PokemonType.allCases.map {
-                .normal(pokemonType: $0)
-            }
-        ].flatMap { $0 }
-        
-        let segmentedControl = UISegmentedControl(
-            frame: .zero,
-            actions: segmentActions.map { segmentAction in
-                switch segmentAction {
-                case .all:
-                    return UIAction(title: "All") { [weak self] _ in
-                        guard let self = self else { return }
-                        Pokemon.decodeAllPokemon()
-                            .receive(on: DispatchQueue.main)
-                            .sink(
-                                receiveCompletion: { _ in },
-                                receiveValue: { [weak self] pokemon in
-                                    self?.pokemonToShow = pokemon
-                                }
-                            ).store(in: &self.cancellables)
-                    }
-                case .normal(let pokemonType):
-                   return UIAction(title: pokemonType.title) { [weak self] _ in
-                        guard let self = self else { return }
-                        Pokemon.pokemonOfType(type: pokemonType)
-                            .receive(on: DispatchQueue.main)
-                            .sink(
-                                receiveCompletion: { _ in },
-                                receiveValue: { [weak self] pokemon in
-                                    self?.pokemonToShow = pokemon
-                                }
-                            ).store(in: &self.cancellables)
-                    }
-                }
-            }
-        )
-        return segmentedControl
-    }()
-    
-    @objc func pokemonTypeValueChanged(_ sender: Any) {
-        let pokemonTypeIndex = segmentedControl.selectedSegmentIndex
-        
-        guard
-            Pokemon.PokemonType.allCases.indices.contains(pokemonTypeIndex)
-        else { return }
-        
-        let nextType = Pokemon.PokemonType.allCases[pokemonTypeIndex]
-        
-        Pokemon.pokemonOfType(type: nextType)
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { _ in },
-                receiveValue: { [weak self] pokemon in
-                    self?.pokemonToShow = pokemon
-                }
-            ).store(in: &cancellables)
-    }
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -119,8 +52,8 @@ class ViewController: UIViewController {
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(
                 primaryAction: UIAction(
-                    title: "Abilities",
-                    handler: showAbilitiesSelector
+                    title: "Filter",
+                    handler: showFilterSelector
                 )
             ),
         ]
@@ -269,7 +202,7 @@ extension ViewController: UICollectionViewDelegate {
 }
 
 extension ViewController {
-    func showAbilitiesSelector(_ action: UIAction) {
+    func showFilterSelector(_ action: UIAction) {
         guard let sender = action.sender as? UIBarButtonItem else { return }
         
         Pokemon.decodeAllAbilities()
@@ -282,7 +215,7 @@ extension ViewController {
                     }
                 },
                 receiveValue: { [weak self] allAbilities in
-                    let abilitiesSelectorViewController = UINavigationController(
+                    /*let abilitiesSelectorViewController = UINavigationController(
                         rootViewController: AbilitiesSelectorViewController(
                             allAbilities: allAbilities
                         ) { [weak self] selectedAbilities in
@@ -300,11 +233,60 @@ extension ViewController {
                     abilitiesSelectorViewController.modalPresentationStyle = .popover
                     abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
                     self?.present(abilitiesSelectorViewController, animated: true)
+                     */
+                    
+                    let hostingViewController = PokemonFilterHostingController(
+                        choosePokemonType: { [weak self] pokemonType in
+                            guard let self = self else { return }
+                            Pokemon.pokemonOfType(type: pokemonType)
+                                .receive(on: DispatchQueue.main)
+                                .sink(
+                                    receiveCompletion: { _ in },
+                                    receiveValue: { [weak self] pokemon in
+                                        self?.pokemonToShow = pokemon
+                                    }
+                                ).store(in: &self.cancellables)
+                        },
+                        chooseAllPokemon: { [weak self] in
+                            guard let self = self else { return }
+                            self.pokemonToShow = self.allPokemon
+                        }
+                    )
+                    hostingViewController.modalPresentationStyle = .popover
+                    hostingViewController.popoverPresentationController?.barButtonItem = sender
+                    self?.present(hostingViewController, animated: true)
                 }
             )
             .store(in: &cancellables)
         
        
+    }
+}
+
+class PokemonFilterHostingController: UIHostingController<PokemonPrimaryFilterView> {
+    init(
+        choosePokemonType: @escaping (Pokemon.PokemonType) -> Void,
+        chooseAllPokemon: @escaping () -> Void
+    ) {
+        let rootView = PokemonPrimaryFilterView()
+        
+        super.init(rootView: rootView)
+        
+        self.rootView.choosePokemonType = { [weak self] pokemonType in
+            self?.dismiss(animated: true) {
+                choosePokemonType(pokemonType)
+            }
+        }
+        
+        self.rootView.chooseAllPokemon = { [weak self] in
+            self?.dismiss(animated: true) {
+                chooseAllPokemon()
+            }
+        }
+    }
+    
+    @MainActor @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

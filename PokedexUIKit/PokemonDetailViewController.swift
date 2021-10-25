@@ -150,6 +150,7 @@ class PokemonDetailViewController: UIViewController {
         super.viewDidLoad()
         
         navigationItem.title = selectedPokemon.name
+        
         pokemonView.nameLabel.text = selectedPokemon.name
         pokemonView.pokedexNumberLabel.text = "#\(selectedPokemon.pokedexNumber)"
         pokemonView.stackBackgroundView.backgroundColor = selectedPokemon.type1.color.withAlphaComponent(0.2)
@@ -158,7 +159,6 @@ class PokemonDetailViewController: UIViewController {
             placeholder: UIImage(named: "International_Pokemon_logo")
         )
 
-        
         view.backgroundColor = .systemBackground
         
         view.addSubview(stackView)
