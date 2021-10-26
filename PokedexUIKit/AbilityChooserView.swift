@@ -28,6 +28,8 @@ struct AbilityChooserView: View {
                 }
             }
         )
+        .listStyle(PlainListStyle())
+        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
     }
 }
 
@@ -37,15 +39,16 @@ struct AbilitySelectorView: View {
     var body: some View {
         VStack(spacing: 2) {
             HStack {
-                Text(ability.ability)
-                    .minimumScaleFactor(0.6)
-                    .padding(8)
+                Text("\(ability.ability) - \(ability.pokemon.count)")
+                    .minimumScaleFactor(0.4)
                     .frame(
                         maxWidth: .infinity,
                         minHeight: 55,
                         alignment: .leading
                     )
-                HStack(spacing: 2) {
+                LazyVGrid(columns: [
+                    GridItem(.adaptive(minimum: 20), spacing: 2)
+                ]) {
                     ForEach(ability.uniqueTypes) {
                         Image(uiImage: $0.smallestImage!)
                             .padding(0)
