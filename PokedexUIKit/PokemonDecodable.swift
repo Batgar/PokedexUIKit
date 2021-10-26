@@ -12,7 +12,11 @@ import UIKit
 
 struct Pokemon: Decodable, Hashable {
     
-    enum PokemonType: String, Decodable, CaseIterable, Hashable {
+    enum PokemonType: String, Decodable, CaseIterable, Hashable, Identifiable {
+        var id: Self {
+            self
+        }
+        
         case fire
         case flying
         case grass
@@ -145,6 +149,13 @@ enum PokemonError: Error {
     case invalidFileURL
 }
 
+extension Ability {
+    var uniqueTypes: [Pokemon.PokemonType] {
+        Array(Set<Pokemon.PokemonType>(pokemon.map { $0.type1 }))
+            .sorted(by: { $0.rawValue < $1.rawValue})
+    }
+}
+
 extension Pokemon {
     var color: UIColor {
         type1.color
@@ -266,5 +277,124 @@ extension UIImage {
         }
         
         return image.withRenderingMode(renderingMode)
+    }
+}
+
+
+
+extension Pokemon {
+    static var previewPikachu: Pokemon {
+        let pikachuJSON = """
+        {
+          "abilities": ["Static", "Lightningrod"],
+          "against_bug": 1,
+          "against_dark": 1,
+          "against_dragon": 1,
+          "against_electric": 0.5,
+          "against_fairy": 1,
+          "against_fight": 1,
+          "against_fire": 1,
+          "against_flying": 0.5,
+          "against_ghost": 1,
+          "against_grass": 1,
+          "against_ground": 2,
+          "against_ice": 1,
+          "against_normal": 1,
+          "against_poison": 1,
+          "against_psychic": 1,
+          "against_rock": 1,
+          "against_steel": 0.5,
+          "against_water": 1,
+          "attack": 55,
+          "base_egg_steps": 2560,
+          "base_happiness": 70,
+          "base_total": 320,
+          "capture_rate": 190,
+          "classfication": "Mouse Pokémon",
+          "defense": 40,
+          "experience_growth": 1000000,
+          "height_m": 0.4,
+          "hp": 35,
+          "japanese_name": "Pikachuピカチュウ",
+          "name": "Pikachu",
+          "percentage_male": 50,
+          "pokedex_number": 25,
+          "sp_attack": 50,
+          "sp_defense": 50,
+          "speed": 90,
+          "type1": "electric",
+          
+          "weight_kg": 6,
+          "generation": 1,
+          "is_legendary": 0
+        }
+        """
+        
+        let decoder = JSONDecoder()
+        
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        return try! decoder.decode(
+            Pokemon.self,
+            from: Data(pikachuJSON.utf8)
+        )
+    }
+    
+    static var previewStunfisk: Pokemon {
+        let stunfiskJSON =
+        """
+        {
+          "abilities": ["Static", "Limber", "Sand Veil"],
+          "against_bug": 1,
+          "against_dark": 1,
+          "against_dragon": 1,
+          "against_electric": 0,
+          "against_fairy": 1,
+          "against_fight": 1,
+          "against_fire": 1,
+          "against_flying": 0.5,
+          "against_ghost": 1,
+          "against_grass": 2,
+          "against_ground": 2,
+          "against_ice": 2,
+          "against_normal": 1,
+          "against_poison": 0.5,
+          "against_psychic": 1,
+          "against_rock": 0.5,
+          "against_steel": 0.5,
+          "against_water": 2,
+          "attack": 66,
+          "base_egg_steps": 5120,
+          "base_happiness": 70,
+          "base_total": 471,
+          "capture_rate": 75,
+          "classfication": "Trap Pokémon",
+          "defense": 84,
+          "experience_growth": 1000000,
+          "height_m": 0.7,
+          "hp": 109,
+          "japanese_name": "Maggyoマッギョ",
+          "name": "Stunfisk",
+          "percentage_male": 50,
+          "pokedex_number": 618,
+          "sp_attack": 81,
+          "sp_defense": 99,
+          "speed": 32,
+          "type1": "ground",
+          "type2": "electric",
+          "weight_kg": 11,
+          "generation": 5,
+          "is_legendary": 0
+        }
+        """
+        
+        let decoder = JSONDecoder()
+        
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        return try! decoder.decode(
+            Pokemon.self,
+            from: Data(stunfiskJSON.utf8)
+        )
     }
 }

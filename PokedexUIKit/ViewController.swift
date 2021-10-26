@@ -236,6 +236,7 @@ extension ViewController {
                      */
                     
                     let hostingViewController = PokemonFilterHostingController(
+                        allAbilities: allAbilities,
                         choosePokemonType: { [weak self] pokemonType in
                             guard let self = self else { return }
                             Pokemon.pokemonOfType(type: pokemonType)
@@ -250,6 +251,17 @@ extension ViewController {
                         chooseAllPokemon: { [weak self] in
                             guard let self = self else { return }
                             self.pokemonToShow = self.allPokemon
+                        },
+                        chooseAbilities: { [weak self] chosenAbilities in
+                            guard let self = self else { return }
+                            guard
+                                !chosenAbilities.isEmpty
+                            else {
+                                self.pokemonToShow = self.allPokemon
+                                return
+                            }
+                            
+                            self.updateWithAbilities(chosenAbilities)
                         }
                     )
                     hostingViewController.modalPresentationStyle = .popover
@@ -265,10 +277,14 @@ extension ViewController {
 
 class PokemonFilterHostingController: UIHostingController<PokemonPrimaryFilterView> {
     init(
+        allAbilities: [Ability],
         choosePokemonType: @escaping (Pokemon.PokemonType) -> Void,
-        chooseAllPokemon: @escaping () -> Void
+        chooseAllPokemon: @escaping () -> Void,
+        chooseAbilities: @escaping ([Ability]) -> Void
     ) {
-        let rootView = PokemonPrimaryFilterView()
+        let rootView = PokemonPrimaryFilterView(
+            allAbilities: allAbilities
+        )
         
         super.init(rootView: rootView)
         
@@ -281,6 +297,12 @@ class PokemonFilterHostingController: UIHostingController<PokemonPrimaryFilterVi
         self.rootView.chooseAllPokemon = { [weak self] in
             self?.dismiss(animated: true) {
                 chooseAllPokemon()
+            }
+        }
+        
+        self.rootView.chooseAbilities = { [weak self] chosenAbilities in
+            self?.dismiss(animated: true) {
+                chooseAbilities(chosenAbilities)
             }
         }
     }
