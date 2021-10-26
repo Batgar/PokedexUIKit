@@ -215,26 +215,6 @@ extension ViewController {
                     }
                 },
                 receiveValue: { [weak self] allAbilities in
-                    /*let abilitiesSelectorViewController = UINavigationController(
-                        rootViewController: AbilitiesSelectorViewController(
-                            allAbilities: allAbilities
-                        ) { [weak self] selectedAbilities in
-                            guard let self = self else { return }
-                            guard
-                                !selectedAbilities.isEmpty
-                            else {
-                                self.pokemonToShow = self.allPokemon
-                                return
-                            }
-                            
-                            self.updateWithAbilities(selectedAbilities)
-                        }
-                    )
-                    abilitiesSelectorViewController.modalPresentationStyle = .popover
-                    abilitiesSelectorViewController.popoverPresentationController?.barButtonItem = sender
-                    self?.present(abilitiesSelectorViewController, animated: true)
-                     */
-                    
                     let hostingViewController = PokemonFilterHostingController(
                         allAbilities: allAbilities,
                         choosePokemonType: { [weak self] pokemonType in

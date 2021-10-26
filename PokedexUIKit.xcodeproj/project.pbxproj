@@ -129,6 +129,7 @@
 		6C46ADD32720B4C000E05DF4 /* PokedexUIKit */ = {
 			isa = PBXGroup;
 			children = (
+				6C4BE38827281CD300E11072 /* Old UIKit Ability Selector */,
 				6C46AE042720B55C00E05DF4 /* pokemon.json */,
 				6C46ADD42720B4C000E05DF4 /* AppDelegate.swift */,
 				6C46ADD62720B4C000E05DF4 /* SceneDelegate.swift */,
@@ -140,11 +141,7 @@
 				6C46AE062720B57D00E05DF4 /* PokemonDecodable.swift */,
 				6C46AE082720C62F00E05DF4 /* PokemonCell.swift */,
 				6C82C21E2723597000BC3FD4 /* PokemonDetailViewController.swift */,
-				6C82C222272448AC00BC3FD4 /* AbilitiesSelectorViewController.swift */,
-				6C82C2242724939800BC3FD4 /* AbilityTableViewCell.swift */,
 				6C82C22C27262D1C00BC3FD4 /* PokemonPrimaryFilterView.swift */,
-				6C82C226272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift */,
-				6C82C228272583DD00BC3FD4 /* AbilitiesCellProvider.swift */,
 				6C82C22A2725E48500BC3FD4 /* PokemonView.swift */,
 				6C4BE3862728073E00E11072 /* AbilityChooserView.swift */,
 			);
@@ -166,6 +163,17 @@
 				6C46ADF72720B4C200E05DF4 /* PokedexUIKitUITestsLaunchTests.swift */,
 			);
 			path = PokedexUIKitUITests;
+			sourceTree = "<group>";
+		};
+		6C4BE38827281CD300E11072 /* Old UIKit Ability Selector */ = {
+			isa = PBXGroup;
+			children = (
+				6C82C222272448AC00BC3FD4 /* AbilitiesSelectorViewController.swift */,
+				6C82C2242724939800BC3FD4 /* AbilityTableViewCell.swift */,
+				6C82C226272580D900BC3FD4 /* AbilitiesTypeAheadViewController.swift */,
+				6C82C228272583DD00BC3FD4 /* AbilitiesCellProvider.swift */,
+			);
+			path = "Old UIKit Ability Selector";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
