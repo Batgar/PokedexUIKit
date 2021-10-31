@@ -69,6 +69,7 @@ class PokemonDetailViewController: UIViewController {
     private lazy var defenseTypesPieChartView: PieChartView = {
         let pieChartView = PieChartView()
         pieChartView.legend.enabled = false
+        pieChartView.centerAttributedText = NSAttributedString(string: "Weakest Against")
         return pieChartView
     }()
     
@@ -304,7 +305,9 @@ class PokemonDetailViewController: UIViewController {
     }
     
     func updateDefensePieChartData() {
-        let entries: [PieChartDataEntry] = selectedPokemon.defenseSummaries.map {
+        let defenseSummaries = selectedPokemon.defenseSummaries.sorted(by: { $0.value > $1.value })
+        
+        let entries: [PieChartDataEntry] = defenseSummaries.map {
             // IMPORTANT: In a PieChart, no values (Entry) should have the same
             // xIndex (even if from different DataSets), since no values can be
             // drawn above each other.
@@ -320,7 +323,7 @@ class PokemonDetailViewController: UIViewController {
         set.drawValuesEnabled = false
         set.iconsOffset = CGPoint(x: 0, y: 60)
         set.sliceSpace = 2
-        set.colors = selectedPokemon.defenseSummaries.compactMap { $0.type.color }
+        set.colors = defenseSummaries.compactMap { $0.type.color }
         
         let data = PieChartData(dataSet: set)
         data.setValueFont(.systemFont(ofSize: 11, weight: .light))

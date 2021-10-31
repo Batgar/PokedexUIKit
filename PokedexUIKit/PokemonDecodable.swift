@@ -280,8 +280,6 @@ extension UIImage {
     }
 }
 
-
-
 extension Pokemon {
     static var previewPikachu: Pokemon {
         let pikachuJSON = """
