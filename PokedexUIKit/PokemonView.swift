@@ -99,9 +99,6 @@ class PokemonView: UIView {
         stackView.insertSubview(stackBackgroundView, at: 0)
         
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 256),
-            imageView.heightAnchor.constraint(equalToConstant: 256),
-            
             typeStackView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             typeStackView.bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
             

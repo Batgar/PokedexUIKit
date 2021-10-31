@@ -177,6 +177,11 @@ class ViewController: UIViewController {
             }
         }
         
+        NSLayoutConstraint.activate([
+            cell.pokemonView.heightAnchor.constraint(equalToConstant: 256),
+            cell.pokemonView.widthAnchor.constraint(equalToConstant: 256),
+        ])
+        
         return cell
     }
 
@@ -192,9 +197,12 @@ extension ViewController: UICollectionViewDelegate {
         let selectedPokemon = sections[indexPath.section].pokemon[indexPath.item]
         
         navigationController?.pushViewController(
-            PokemonDetailViewController(
-                allPokemon: allPokemon,
-                selectedPokemon: selectedPokemon
+            UIHostingController(
+                rootView:
+                    PokemonDetailView(
+                        allPokemon: allPokemon,
+                        selectedPokemon: selectedPokemon
+                    )
             ),
             animated: true
         )
