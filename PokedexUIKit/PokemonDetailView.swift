@@ -101,12 +101,20 @@ struct GraphBarView: View {
             
             VStack(spacing: 0) {
                 Spacer()
+                ZStack(alignment: .bottomLeading) {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(color)
+                    .frame(
+                        width: 20,
+                        height: barHeight
+                    )
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(color)
                     .frame(
                         width: 20,
                         height: barHeight * height
                     )
+                }
                 VStack(spacing: 0) {
                     Spacer()
                     Text(label)
