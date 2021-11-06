@@ -115,11 +115,12 @@ struct GraphBarView: View {
                     Text(value)
                         .multilineTextAlignment(.center)
                         .font(.footnote)
-                        
                 }
                 .frame(height: labelHeight)
             }
+            .frame(width: metrics.size.width)
         }
+        .padding(EdgeInsets(top: 0, leading: 0, bottom: 8, trailing: 0))
     }
 }
 
