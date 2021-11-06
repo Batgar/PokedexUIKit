@@ -5,6 +5,7 @@
 //  Created by Dan Edgar on 10/31/21.
 //
 
+import Charts
 import SwiftUI
 
 struct PokemonDetailView: View {
@@ -25,6 +26,10 @@ struct PokemonDetailView: View {
                     GridItem(.flexible()),
                 ]) {
                     PokemonCardView(selectedPokemon: $selectedPokemon)
+                        .frame(minHeight: baseHeight)
+                        .padding()
+                    
+                    WeakestAgainstPieChartView(selectedPokemon: $selectedPokemon)
                         .frame(minHeight: baseHeight)
                         .padding()
                     
@@ -137,6 +142,50 @@ struct PokemonCardView: UIViewRepresentable {
         uiView.type1ImageView.image = selectedPokemon.type1.image
         uiView.type2ImageView.image = selectedPokemon.type2?.image
         uiView.stackBackgroundView.backgroundColor = selectedPokemon.type1.color.withAlphaComponent(0.2)
+    }
+}
+
+struct WeakestAgainstPieChartView: UIViewRepresentable {
+    @Binding var selectedPokemon: Pokemon
+
+    func makeUIView(context: Context) -> PieChartView {
+        let pieChartView = PieChartView()
+        pieChartView.legend.enabled = false
+        pieChartView.centerAttributedText = NSAttributedString(string: "Weakest Against")
+        return pieChartView
+    }
+    
+    func updateUIView(_ uiView: PieChartView, context: Context) {
+        updatePieChartData(pieChartView: uiView)
+    }
+    
+    private func updatePieChartData(pieChartView: PieChartView) {
+        let defenseSummaries = selectedPokemon.defenseSummaries.sorted(by: { $0.value > $1.value })
+        
+        let entries: [PieChartDataEntry] = defenseSummaries.map {
+            // IMPORTANT: In a PieChart, no values (Entry) should have the same
+            // xIndex (even if from different DataSets), since no values can be
+            // drawn above each other.
+            PieChartDataEntry(
+                value: $0.value,
+                label: $0.type.title,
+                icon: $0.type.smallerImage
+            )
+        }
+        
+        let set = PieChartDataSet(entries: entries, label: "Attack Effectiveness")
+        set.drawIconsEnabled = true
+        set.drawValuesEnabled = false
+        set.iconsOffset = CGPoint(x: 0, y: 60)
+        set.sliceSpace = 2
+        set.colors = defenseSummaries.compactMap { $0.type.color }
+        
+        let data = PieChartData(dataSet: set)
+        data.setValueFont(.systemFont(ofSize: 11, weight: .light))
+        data.setValueTextColor(.black)
+        
+        pieChartView.data = data
+        pieChartView.highlightValues(nil)
     }
 }
 
