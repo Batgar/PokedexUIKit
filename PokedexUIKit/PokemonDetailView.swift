@@ -29,9 +29,21 @@ struct PokemonDetailView: View {
                         .frame(minHeight: baseHeight)
                         .padding()
                     
-                    WeakestAgainstPieChartView(selectedPokemon: $selectedPokemon)
+                    ScrollView {
+                        Text("Weaknesses")
+                        LazyVGrid(columns: [
+                            GridItem(.flexible()),
+                            GridItem(.flexible()),
+                        ]) {
+                            ForEach(selectedPokemon.defenseSummaries.sorted(by: { $0.value > $1.value })) { defenseSummary in
+                                PokemonWeaknessView(defenseSummary: defenseSummary)
+                            }
+                        }
+                    }.frame(maxHeight: baseHeight)
+                    
+                    /*WeakestAgainstPieChartView(selectedPokemon: $selectedPokemon)
                         .frame(minHeight: baseHeight)
-                        .padding()
+                        .padding()*/
                     
                 }.frame(minWidth: metrics.size.width,
                         minHeight: baseHeight)
@@ -207,7 +219,7 @@ struct PokemonDetailView_Previews: PreviewProvider {
             ],
             selectedPokemon: Pokemon.previewPikachu
         )
-.previewInterfaceOrientation(.portraitUpsideDown)
+.previewInterfaceOrientation(.landscapeRight)
     }
 }
 
@@ -234,5 +246,31 @@ private extension Array where Element == Pokemon {
     
     var maxSpeed: Double {
         self.max(by: { a, b in a.speed < b.speed })?.speed ?? 0
+    }
+}
+
+struct PokemonWeaknessView: View {
+    let defenseSummary: Pokemon.DefenseSummary
+    var body: some View {
+        HStack()
+        {
+            Image(uiImage: defenseSummary.type.smallestImage!)
+                .padding(4)
+            Text(defenseSummary.type.title)
+                .foregroundColor(.white)
+                .fontWeight(.bold)
+                .layoutPriority(1)
+            Spacer()
+            Text(String(format: "%.1f", defenseSummary.value))
+                .padding(EdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4))
+                .foregroundColor(Color.white)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.white, lineWidth: 1)
+                )
+                
+        }
+        .background(Color(defenseSummary.type.color))
+        .cornerRadius(12)
     }
 }

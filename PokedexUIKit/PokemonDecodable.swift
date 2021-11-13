@@ -165,7 +165,11 @@ extension Pokemon {
         type1.color
     }
     
-    struct DefenseSummary {
+    struct DefenseSummary: Equatable, Hashable, Identifiable {
+        var id: Self {
+            self
+        }
+        
         let value: Double
         let type: PokemonType
     }
