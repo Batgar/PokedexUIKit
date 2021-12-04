@@ -13,89 +13,65 @@ struct PokemonDetailView: View {
     @State var selectedPokemon: Pokemon
     
     var body: some View {
-        GeometryReader { metrics in
-            let baseHeight =  metrics.size.height * 0.5
-            LazyHGrid(
-                rows: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                ]
-            ) {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                ]) {
-                    PokemonCardView(selectedPokemon: $selectedPokemon)
-                        .frame(minHeight: baseHeight)
-                        .padding()
-                    
-                    ScrollView {
-                        Text("Weaknesses")
-                        LazyVGrid(columns: [
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                        ]) {
-                            ForEach(selectedPokemon.defenseSummaries.sorted(by: { $0.value > $1.value })) { defenseSummary in
-                                PokemonWeaknessView(defenseSummary: defenseSummary)
-                            }
-                        }
-                    }.frame(maxHeight: baseHeight)
-                    
-                    /*WeakestAgainstPieChartView(selectedPokemon: $selectedPokemon)
-                        .frame(minHeight: baseHeight)
-                        .padding()*/
-                    
-                }.frame(minWidth: metrics.size.width,
-                        minHeight: baseHeight)
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                ]) {
-                    HStack {
-                        GraphBarView(
-                            height: selectedPokemon.hp / allPokemon.maxHP,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "HP",
-                            value: "\(Int(selectedPokemon.hp))"
-                        )
-                        
-                        GraphBarView(
-                            height: selectedPokemon.attack / allPokemon.maxAttack,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "Attack",
-                            value: "\(Int(selectedPokemon.attack))"
-                        )
-                        
-                        GraphBarView(
-                            height: selectedPokemon.defense / allPokemon.maxDefense,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "Defense",
-                            value: "\(Int(selectedPokemon.defense))"
-                        )
-                        
-                        GraphBarView(
-                            height: selectedPokemon.spAttack / allPokemon.maxSpecialAttack,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "Special Attack",
-                            value: "\(Int(selectedPokemon.spAttack))"
-                        )
-                        
-                        GraphBarView(
-                            height: selectedPokemon.spDefense / allPokemon.maxSpecialDefense,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "Special Defense",
-                            value: "\(Int(selectedPokemon.spDefense))"
-                        )
-                        
-                        GraphBarView(
-                            height: selectedPokemon.speed / allPokemon.maxSpeed,
-                            color: Color(selectedPokemon.type1.color),
-                            label: "Speed",
-                            value: "\(Int(selectedPokemon.speed))"
-                        )
-                    }.frame(minHeight: baseHeight)
-                }.frame(minWidth: metrics.size.width,
-                         minHeight: metrics.size.height * 0.5)
-            }.frame(minWidth: metrics.size.width, minHeight: metrics.size.height)
+        ScrollView {
+            PokemonCardView(selectedPokemon: $selectedPokemon)
+                .padding()
+                .frame(minHeight: 300)
+            
+            
+            Text("Weaknesses")
+            LazyVGrid(columns: [
+                GridItem(.flexible()),
+                GridItem(.flexible()),
+            ]) {
+                ForEach(selectedPokemon.defenseSummaries.sorted(by: { $0.value > $1.value })) { defenseSummary in
+                    PokemonWeaknessView(defenseSummary: defenseSummary)
+                }
+            }.padding()
+            
+            HStack {
+                GraphBarView(
+                    height: selectedPokemon.hp / allPokemon.maxHP,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "HP",
+                    value: "\(Int(selectedPokemon.hp))"
+                )
+                
+                GraphBarView(
+                    height: selectedPokemon.attack / allPokemon.maxAttack,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "Attack",
+                    value: "\(Int(selectedPokemon.attack))"
+                )
+                
+                GraphBarView(
+                    height: selectedPokemon.defense / allPokemon.maxDefense,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "Defense",
+                    value: "\(Int(selectedPokemon.defense))"
+                )
+                
+                GraphBarView(
+                    height: selectedPokemon.spAttack / allPokemon.maxSpecialAttack,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "Special Attack",
+                    value: "\(Int(selectedPokemon.spAttack))"
+                )
+                
+                GraphBarView(
+                    height: selectedPokemon.spDefense / allPokemon.maxSpecialDefense,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "Special Defense",
+                    value: "\(Int(selectedPokemon.spDefense))"
+                )
+                
+                GraphBarView(
+                    height: selectedPokemon.speed / allPokemon.maxSpeed,
+                    color: Color(selectedPokemon.type1.color),
+                    label: "Speed",
+                    value: "\(Int(selectedPokemon.speed))"
+                )
+            }.frame(minHeight: 350)
         }
     }
 }
@@ -219,7 +195,7 @@ struct PokemonDetailView_Previews: PreviewProvider {
             ],
             selectedPokemon: Pokemon.previewPikachu
         )
-.previewInterfaceOrientation(.landscapeRight)
+.previewInterfaceOrientation(.portraitUpsideDown)
     }
 }
 
@@ -268,8 +244,8 @@ struct PokemonWeaknessView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.white, lineWidth: 1)
                 )
-                
         }
+        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 8))
         .background(Color(defenseSummary.type.color))
         .cornerRadius(12)
     }
